@@ -326,10 +326,11 @@ plt.show()
 
 # %%
 # 복습하고 최적의 k값을 찾아보기
-
+# 115 0.9902222162421708
+# 71  0.9931089248584817
 
 # target user를 sp matrix 형태로 선언
-for i in range(20, 100, 5):
+for i in range(20, 80, 10):
     knn = NearestNeighbors(n_neighbors=i, metric = 'cosine')
     knn.fit(train_sp)
 
@@ -359,40 +360,6 @@ for i in range(20, 100, 5):
     print(i, rmse)
 
 # %%
-# 복습하고 최적의 k값을 찾아보기
 
-
-# target user를 sp matrix 형태로 선언
-for i in range(100, 150, 5):
-    knn = NearestNeighbors(n_neighbors=i, metric = 'cosine')
-    knn.fit(train_sp)
-
-    total_prd_df = pd.DataFrame(data = None, columns = ['movieID', 'userID', 'rating', 'pred'])
-    for target_user_idx in range(num_user):
-        target_tr_df = train_df[train_df['u_idx'] == target_user_idx]
-        target_sp = coo_matrix((target_tr_df['rating'], ([0] * len(target_tr_df), target_tr_df['i_idx'])),
-                shape = (1, num_movie))
-        dist, idx = knn.kneighbors(target_sp, n_neighbors = i)
-
-        # 8번 유저에 대한 이웃들의 영화 평점 예측
-        n_df = rating_df[rating_df['u_idx'].isin(idx[0][1:])]
-        pred_df = n_df.groupby('movieID').mean()['rating'].sort_values(ascending = False)
-        pred_df = pred_df.reset_index().rename({'rating':'pred'}, axis = 1)
-
-        # 평가
-        target_vl_df = val_df[val_df['u_idx'] == target_user_idx]
-        target_vl_df = target_vl_df.sort_values('rating')
-
-        pred_te_df = pred_df[pred_df['movieID'].isin(target_vl_df['movieID'])]
-
-        resul_df = pd.merge(target_vl_df, pred_te_df, on = 'movieID', how='inner')[['movieID', 'userID', 'rating', 'pred']]
-        total_prd_df = pd.concat([total_prd_df, resul_df])
-    total_prd_df
-
-    rmse = mean_squared_error(total_prd_df['rating'], total_prd_df['pred'], squared = False)
-    print(i, rmse)
-
-# %%
-rmse_df.columns = ['10', '20']
 
 
