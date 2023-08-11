@@ -18,14 +18,14 @@ user_df = pd.read_csv('BX-Users.csv', sep=';', encoding = 'latin')
 rating_df = pd.read_csv('BX-Book-Ratings.csv', sep=';', encoding = 'latin')
 user = [88705, 264321, 182459, 161936, 226482, 11676, 198711]
 
+
 # %%
 li = [88705,264321,182459,161936,226482, 11676, 198711]
-print(user_df[user_df['User-ID'].isin(li)])
-
-
+for i in li:
+    print(user_df[user_df['User-ID'] == i].values)
 
 # %% [markdown]
-# ## 현준님
+#  ## 현준님
 
 # %%
 #############################################데이터 전처리 과정#######################################################
@@ -46,7 +46,6 @@ for i in Location_country:
     real_Location_country.append(i.strip()) ### replace(' ', '')
 
 # 200번에 'united kingdom' 빠져있음 ㅡㅡ 추가
-### 빠진 항목이 많을텐데 200번만 추가한 이유가 궁금합니다.
 real_Location_country.insert(200, 'united kingdom')
 
 # user_df의 2번째 열에 country 추가 및 Location 열 제거 
@@ -58,7 +57,6 @@ Users_by_Contry = pd.DataFrame(data = user_df['Country'].value_counts(), index =
 Users_by_Contry = Users_by_Contry.sort_values('Country', ascending = False)
 
 # user가 가장 많이 거주하는 나라 top_8과 그 외 나라에서 거주하는 user
-### top8과 그 외로 나눈 이유가 궁금합니다. 국가가 없는 유저라면 추천하지 않아야 하지 않을까...
 Users_by_Contry_Top_8 = Users_by_Contry.head(8)
 Users_by_Contry_Top_8.rename(index = {"" : 'other'}, inplace = True)
 
@@ -82,24 +80,25 @@ user_df.insert(1, 'User_Contry', contry_name)
 user_df.drop('Country', axis = 1, inplace = True)
 
 
+
 # %%
-##################################################추천 함수 만드는 과정##################################################
 # 외부에서 user 추천
 # 해당유저가 읽은 책 제외
-# new_df에서 아래 대로 진행하고 user의 거주지역에서 bestseller n권, 전세계 베셀 n권 추천
+# new_df에서 아래 대로 진행하고 user의 거주지역에서 bestseller n권
 
 def best_seller_recommand_country(b_df, target_user_idx, recommand_num):
     retBooks = []
     recommand_df = pd.merge(b_df, user_df)
     user_country = user_df[user_df['User-ID'] == target_user_idx]['User_Contry'].values[0] # 해당 유저의 거주국가 
     # 해당 유저의 국가의 best n 추천
-    User_Country_Best_Seller = recommand_df[recommand_df['User_Contry'] == user_country]['ISBN'].value_counts()[:recommand_num + 1].index
+    User_Country_Best_Seller = recommand_df[recommand_df['User_Contry'] == user_country]['ISBN'].value_counts()[:recommand_num].index
     retBooks.extend(book_df[book_df['ISBN'].isin(User_Country_Best_Seller)]['ISBN'].tolist())
     
     return retBooks
 
+
 # %% [markdown]
-# ## 윤지님
+#  ## 윤지님
 
 # %%
 # 평점 1이상이면서, 리뷰 10개 이상인 책들의 평균평점이 가장 높은 책 추천
@@ -115,8 +114,9 @@ def best_seller_recommand_rating(b_df, recommand_num):
     return total_recom.iloc[:recommand_num]['ISBN'].tolist()
 
 
+
 # %% [markdown]
-# ## 상혁님
+#  ## 상혁님
 
 # %%
 # 가장 많이 팔린 책 추천
@@ -127,6 +127,7 @@ def best_seller_recommand_selling(b_df, recommand_num):
     book_sold.reset_index(inplace = True)
     return book_sold[:recommand_num]['ISBN'].tolist()
     
+
 
 # %%
 # KNN 대규모 추천
@@ -152,8 +153,9 @@ def fitKnn():
     return knn
 
 def best_seller_recommand_knn(curknn, target_user_idx):
-    target_rating_df = rating_df[~(rating_df['User-ID'] == target_user_idx)]
+    target_rating_df = rating_df[rating_df['User-ID'] == target_user_idx]
 
+    num_books = rating_df['b_idx'].nunique()
     target_sparse_arr = coo_matrix((target_rating_df['Book-Rating'], ([0]*len(target_rating_df['u_idx']), target_rating_df['b_idx'])), shape = (1, num_books))
 
     dist, idx = curknn.kneighbors(target_sparse_arr, n_neighbors = 850)
@@ -165,14 +167,26 @@ def best_seller_recommand_knn(curknn, target_user_idx):
 
     result_df = pd.merge(target_rating_df, pred_df, on = 'ISBN')[['ISBN', 'Book-Rating', 'pred', 'u_idx']]
 
-    return result_df.sort_values('pred', ascending= False)['ISBN'][:5].values.tolist()
+    return result_df.groupby('ISBN').mean().sort_values('pred', ascending= False).reset_index()['ISBN'][:3].values.tolist()
         
 
+
 # %% [markdown]
-# ## 석호님
+#  ## 석호님
+# - 유저가 가장 좋아하는 작가의 책 추천
+# - 가장 평점이 좋은 책, 가장 많이 팔린 책, 가장 많이 팔렸으면서 평점이 좋은 책
+# - 평점을 남긴 책이 10권 이상인 유저만 작가 베이스 추천   
+# ---
+# - 264321 best author : Joe Haldeman
+# - 182459 best author : J. K. Rowling
+# - 161936 best author : Dave Pelzer
+# - 226482 best author : Jane Green
+# - 11676 best author : Alice Sebold
+# - 198711 best author : Marguerite S. Herman
 
 # %%
 # 유저가 가장 좋아하는 작가의 책 추천
+# 가장 좋아하는 작가 : 평점*리뷰수
 # 가장 평점이 좋은 책, 가장 많이 팔린 책, 가장 많이 팔렸으면서 평점이 좋은 책
 def best_seller_recommand_author(b_df, target_user_idx, recommand_num):
     # author_merged_df
@@ -197,26 +211,40 @@ def best_seller_recommand_author(b_df, target_user_idx, recommand_num):
         best_author = book_mean_df[book_mean_df['Book-Author'].isin(best_author_list)].sort_values('mean_count',ascending=False).iloc[0]['Book-Author']
         # by mean
         target_books = book_mean_df[(book_mean_df['Book-Author'] == best_author)& ~(book_mean_df.ISBN.isin(isbn_target))]
-        li.extend(target_books.sort_values(by=['mean_rating','count_rating'],ascending=False)['ISBN'][:recommand_num].tolist())
-        # by count
-        li.extend(target_books.sort_values(by=['count_rating','mean_rating'],ascending=False)['ISBN'][:recommand_num].tolist())
-        # by mean*count
         li.extend(target_books.sort_values(by=['mean_count','mean_rating'],ascending=False)['ISBN'][:recommand_num].tolist())
     return li
+
 
 # %%
 fittedKnn = fitKnn()
 users = [88705, 264321, 182459, 161936, 226482, 11676, 198711]
 for cur_user in users:
-    li = []
+    li, author, knn = [], [], []
+    readBooks = rating_df[(rating_df['User-ID'] == cur_user) & (rating_df['Book-Rating'] > 0)].count()['User-ID']
+    # 유저가 읽은 책 제외한 dataframe
     user_book_df = rating_df[rating_df['User-ID'] != cur_user]
-    country = best_seller_recommand_country(user_book_df, cur_user, 4)
-    rating = best_seller_recommand_rating(user_book_df, cur_user, 5)
-    selling = best_seller_recommand_selling(user_book_df, cur_user, 5)
-    knn = best_seller_recommand_knn(fittedKnn, cur_user)
-    author = best_seller_recommand_author(rating_df, cur_user, 2) # 읽었던 책이 필요해서 rating_df
-    li = country+rating+selling+knn+author
-    print(set(li))
+    if readBooks >= 10:
+        author = best_seller_recommand_author(rating_df, cur_user, 3) # 읽었던 책이 필요해서 rating_df
+        knn = best_seller_recommand_knn(fittedKnn, cur_user) # 3권
+        country = best_seller_recommand_country(user_book_df, cur_user, 4)
+        rating = best_seller_recommand_rating(user_book_df, 4)
+        selling = best_seller_recommand_selling(user_book_df, 4)
+    else:
+        country = best_seller_recommand_country(user_book_df, cur_user, 5)
+        rating = best_seller_recommand_rating(user_book_df, 5)
+        selling = best_seller_recommand_selling(user_book_df, 5)
+        
+    # 우선이 되는 지표에 가중치 부여
+    li = author*5 + knn*3 + country*2 + rating + selling
+    rcmdbook = pd.DataFrame(li, columns = ['ISBN'])
+    rcmdbook['count'] = 0
+    rcmdbook = rcmdbook.groupby('ISBN').count().reset_index().sort_values('count', ascending = False)
+    rcmdbook = pd.merge(rcmdbook, book_df[['ISBN', 'Book-Title']], on = 'ISBN', how = 'left')
+    print(f'user : {cur_user}')
+    for title in rcmdbook['Book-Title'][:10]:
+        print(title)
+    print('='*15)
+
 
 # %%
 
