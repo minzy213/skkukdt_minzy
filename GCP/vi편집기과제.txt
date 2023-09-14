@@ -1,0 +1,48 @@
+[실습준비]
+1. /tmp 디렉토리로 이동하여 edit 디렉토리를 생성하시오. 
+cd  /tmp ---> mkdir  edit ---> cd edit 
+
+2. 아래명령을 실행하시오. 
+cp /etc/services  /tmp/edit/testfile 
+------------------------------------------------------- 
+
+실습문제 - 
+1. testfile 의 맨 마지막줄 아래에 
+hello unix 라는 문장을 한줄 추가하시오. 
+
+cat hello unix >> testfile
+
+2.testfile 의 2000번째줄 바로 아래에 
+hello linux 라는 문장을 한줄 추가하시오 
+
+vi 들어가서 편집
+
+3. testfile 에서 57번째라인부터 99번째까지의 
+라인을 복사하여 2001번째 라인에 붙여넣으시오. 
+
+vi
+:57 # 57 line으로 이동
+43yy # (57-99 cp)
+:2000 # 2000 line으로 이동
+p # paste
+
+4. 2003번째 라인부터 그 아래로 100줄을 삭제하시오.(dd) 
+:2003 # 2003 line으로 이동
+100dd # 100줄 삭제
+
+5. 2050번째 라인부터 마지막줄까지 모두 삭제하시오(Last line 모드에서) 
+:2050,$d # $ : 마지막줄
+===============================================
+6. cp  /etc/passwd  /tmp/test/passwd.txt 로 복사한다음 
+아래와  같이 편집하세요. 
+1) passwd.txt 에서 5 ~ 20 라인까지만 nologin 이라는 문자열을 bash로 변경하시오. 
+(라스트라인모드에서 문자열 치환명령어사용) 
+:5,20s/nologin/bash
+
+2) passwd.txt 파일 전체에서 bin 을 대문자 BIN 으로 변경하시오. 
+cat passwd.txt | tr bin BIN | cat > passwd.txt 
+# passwd 읽어온다 | bin을 BIN으로 바꾼다 | output을 passwd에 저장한다
+
+3) passwd.txt 에서 1~10라인까지를 짤라서 passwd.txt 맨끝에 붙여넣기 하시오
+head -n 10 passwd.txt | cat >> passwd.txt
+# passwd 10줄 가져온다 | passwd 맨 끝에 붙여넣는다
