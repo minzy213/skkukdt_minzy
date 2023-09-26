@@ -1,0 +1,46 @@
++ html 속성
+  meta : 문서의 정보를 알려줌
+  form : 사용자와의 interaction. 
+  	http method get, post, put, delete 중 get, post만 있다.
+  	- get은 url로 요청
+  		-> 뭔가 누르면 parameter가 변한다.
+  	- post는 message body로 요청
+  		-> network 탭의 payload에서 확인 가능
+  	- action은 url 전달, 없을때는 현재 경로를 날린다.
+  input : input받는거. 이것들을 form tag로 묶어있다.
+  	- 서버에서 input의 name을 key값으로 해서 데이터 파싱한다.
+  ul : unordered list
+  ol : ordered list
+  br : 개행
+  hr : 수평선
+  
+  table : 표
+  	thead : 헤더
+  	tbody : value
+  	
+  semantic tag : div에 이름을 부여해서 검색엔진에서 어떤 데이터를 가져올건지 제공해주는것.
+  
++ css 속성
+  display : 블록. width 등등 다 먹는다.
+  float : 땡기기. 좌측/우측
+  overflow : 상위 태그보다 초과될때 어떻게 할건지.
+  position : 화면의 특정 픽셀에 위치할건지, 다른 블록들 뒤에 쌓이게 할 건지 선택.
+  
+  - px : 절대적인 크기
+  - em : 상위 태그에 대비해서 상대적인 크기
+  - rem : 최상단 태그(HTML 태그)에 대비해서 상대적인 크기(스마트폰 때문)
+  
+ position
+ - initial 초기값
+ - inherit 상속
+ - static 기본값
+ - absolute 절대 위치 지정, 스크롤 내려도 그대로
+ - fixed 절대 위치 지정, 스크롤 내리면 같이 내려온다. 화면의 해당 위치에 고정
+ 
+ css는 head에 없으면 사용자가 깨진 화면을 보게 돼서 일찍 있어야 하고, js는 주로 애니메이션 등의 효과라서 뒤에 있어도 된다.
+ 
++ Grid
+ 반드시 container-row-col 순서로 되어야 한다.
+ .col-size-전체를 12등분해서 차지하는 칸
+ .col-6 .col-md-4 : md보다 크면 4칸, md보다 작으면 6칸
+ col-3 : 1/4
