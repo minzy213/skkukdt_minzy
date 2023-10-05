@@ -1,0 +1,39 @@
+{% extends "./partials/base.html" %} {% block title %}
+<title>Write</title>
+{% endblock title %} {% block main %}
+<div style="margin: 1.5rem; margin-left: 20%; margin-right: 20%">
+    <a style="font-weight: bold; font-size: 2rem">게시글 수정</a>
+    <hr class="my-4" />
+    <form action="" method="POST">
+        {% csrf_token %}
+        <div class="board-header p-3 mb-3">
+            <label for="title-input" class="form-label">글 제목</label>
+            <input
+                type="text"
+                name="title"
+                class="form-control"
+                id="title-input"
+                placeholder="글 제목을 입력해주세요."
+                value="{{info.title}}" />
+        </div>
+        <div class="board-content p-3 mb-3">
+            <label for="content-input" class="form-label">내용</label>
+            <textarea
+                class="form-control"
+                name="content"
+                id="content-input"
+                rows="10">
+                {{info.content}}
+            </textarea>
+        </div>
+
+        <div class="mb-3 p-3">
+            <div style="float: right">
+                <button type="submit" class="btn btn-outline-success">
+                    수정
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}

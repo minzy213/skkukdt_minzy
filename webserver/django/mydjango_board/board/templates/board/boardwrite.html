@@ -1,66 +1,43 @@
-<!doctype html>
-<html lang="en">
+{% extends "./partials/base.html" %} {% block title %}
+<title>Write</title>
+{% endblock title %} {% block main %}
+<div style="margin: 1.5rem; margin-left: 20%; margin-right: 20%">
+    <a style="font-weight: bold; font-size: 2rem">게시글 작성</a>
+    <hr class="my-4" />
+    {% comment %} action은 비워두면 defalut가 현재 url {% endcomment %}
+    <form action="{% url 'board:write' %}" method="POST">
+        {% csrf_token %} {% comment %}
+        <div class="board-header p-3 mb-3">
+            <label for="title-input" class="form-label">글 제목</label>
+            <input
+                type="text"
+                name="title"
+                class="form-control"
+                id="title-input"
+                placeholder="글 제목을 입력해주세요." />
+        </div>
+        <div class="board-content p-3 mb-3">
+            <label for="content-input" class="form-label">내용</label>
+            <textarea
+                class="form-control&quot; name=&quot;content&quot; id=&quot;content-input&quot; rows=10"></textarea>
+        </div>
+        {% endcomment %} {% for field in form %}
+        <div class="fieldWrapper m-2">
+            {{ field.label_tag }} {{ field }} {% for error in field.errors %}
+            <div id="content-help" class="form-text text-danger">
+                {{ field.errors }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endfor %}
 
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Bootstrap demo</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
-</head>
-
-<body>
-    <!-- navigation bar -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
-        crossorigin="anonymous"></script>
-
-
-    <header class="p-3 text-bg-dark">
-        <div class="container">
-            <div class="d-flex flex-wrap align-items-center justify-content-center ">
-                <button type="button" class="btn btn-warning">Navbar</button>
-
-                <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
-                    <li><a href="#" class="nav-link px-2 text-white">Home</a></li>
-                    <li><a href="#" class="nav-link px-2 text-white">Board</a></li>
-                    <li><a href="#" class="nav-link px-2 text-secondary">Disabled</a></li>
-                    <li><a href="#" class="nav-link px-2 text-secondary">Dropdown</a></li>
-                </ul>
-
-                <form class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3" role="search">
-                    <input type="search" class="form-control form-control-dark text-bg-dark" placeholder="Search..."
-                        aria-label="Search">
-                </form>
-
-                <div class="text-end">
-                    <button type="button" class="btn btn-outline-light me-2">Login</button>
-                    <button type="button" class="btn btn-warning">Sign-up</button>
-                </div>
+        <div class="mb-3 p-3">
+            <div style="float: right">
+                <button type="submit" class="btn btn-outline-success">
+                    작성
+                </button>
             </div>
         </div>
-    </header>
-
-    <div style="margin: 1.5rem; margin-left: 20%; margin-right: 20%;">
-        <a style="font-weight: bold;font-size:2rem;">게시글 작성</a>
-        <hr class="my-4">
-        <div>
-            <h5 style="font-weight: bold">제목</h5>
-            <input type="text" class="form-control" placeholder="제목" aria-label="Title" aria-describedby="basic-addon1">
-            <br>
-            <h5 style="font-weight: bold">작성자</h5>
-            <input type="text" class="form-control" placeholder="홍길동" aria-label="Username"
-                aria-describedby="basic-addon1">
-            <br>
-            <h5 style="font-weight: bold">내용</h5>
-            <textarea class="form-control" aria-label="With textarea"></textarea>
-            <br>
-        </div>
-        <button type="button" class="btn btn-lg btn-primary" style="float: right;">게시글 작성</button>
-    </div>
-
-
-
-</body>
-
-</html>
+    </form>
+</div>
+{% endblock %}

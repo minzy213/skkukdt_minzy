@@ -1,0 +1,32 @@
+{% extends "./partials/base.html" %} {% block main %}
+<div style="margin: 0.3rem">
+    <a style="font-weight: bold; font-size: 2rem">게시글</a>
+    <button type="button" class="btn btn-outline-warning" style="float: right">게시글 작성</button>
+</div>
+<div class="list-group">
+    <a href="#" class="list-group-item list-group-item-action">
+        <div class="d-flex w-100 justify-content-between">
+            <h5 class="mb-1">게시글 1</h5>
+            <small>3 days ago</small>
+        </div>
+        <p class="mb-1">내용 1</p>
+        <small>박민지</small>
+    </a>
+    <a href="#" class="list-group-item list-group-item-action">
+        <div class="d-flex w-100 justify-content-between">
+            <h5 class="mb-1">게시글 2</h5>
+            <small class="text-muted">3 days ago</small>
+        </div>
+        <p class="mb-1">내용 2</p>
+        <small class="text-muted">박민지</small>
+    </a>
+    <a href="#" class="list-group-item list-group-item-action">
+        <div class="d-flex w-100 justify-content-between">
+            <h5 class="mb-1">게시글 3</h5>
+            <small class="text-muted">3 days ago</small>
+        </div>
+        <p class="mb-1">내용 3</p>
+        <small class="text-muted">박민지</small>
+    </a>
+</div>
+{% endblock %}
