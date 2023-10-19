@@ -8,8 +8,8 @@ from .serializers import StudentSerializer
 from rest_framework.response import Response
 
 
-@api_view(["GET"])
+@api_view(['GET'])
 def StudentView(request):
-    qs = Students.objects.filter()
-    serializer = StudentSerializer(qs, many=True)
-    return Response(serializer.data)
+   qs = Students.objects.filter()
+   serializer = StudentSerializer(qs, many=True)
+   return Response(serializer.data)
